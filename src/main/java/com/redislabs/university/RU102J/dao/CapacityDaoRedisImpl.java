@@ -6,6 +6,7 @@ import com.redislabs.university.RU102J.api.SiteCapacityTuple;
 import redis.clients.jedis.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -59,7 +60,12 @@ public class CapacityDaoRedisImpl implements CapacityDao {
     @Override
     public Long getRank(Long siteId) {
         // START Challenge #4
-        return -2L;
+        String rankingKey = RedisSchema.getCapacityRankingKey();
+        try(Jedis jedis = jedisPool.getResource())
+        {
+            return jedis.zrevrank(rankingKey, String.valueOf(siteId));
+        }
+
         // END Challenge #4
     }
 }
